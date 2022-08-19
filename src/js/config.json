@@ -1,0 +1,220 @@
+[
+{
+  "type": "heading",
+  "defaultValue": "Vuela"
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Colors & style"
+    },
+    {
+      "type": "color",
+      "messageKey": "screen_color",
+      "defaultValue": "000000",
+      "label": "Screen color",
+      "allowGray": true,
+      "capabilities": ["NOT_ROUND"]
+    },
+    {
+      "type": "color",
+      "messageKey": "clock_bg_color",
+      "defaultValue": "000000",
+      "label": "Clock background"
+    },
+    {
+      "type": "color",
+      "messageKey": "clock_fg_color",
+      "defaultValue": "FFFFFF",
+      "label": "Clock foreground"
+    },
+    {
+      "type": "color",
+      "messageKey": "hour_hand_color",
+      "defaultValue": "FFFFFF",
+      "label": "Hour hand"
+    },
+    {
+      "type": "color",
+      "messageKey": "minute_hand_color",
+      "defaultValue": "FFFFFF",
+      "label": "Minute hand"
+    },
+    {
+      "type": "color",
+      "messageKey": "second_hand_color",
+      "defaultValue": "FF0000",
+      "label": "Second hand",
+      "capabilities": ["COLOR"]
+    },
+    {
+      "type": "color",
+      "messageKey": "second_hand_color",
+      "defaultValue": "FFFFFF",
+      "label": "Second hand",
+      "capabilities": ["BW"]
+    },
+    {
+      "type": "radiogroup",
+      "messageKey": "clock_font",
+      "defaultValue": "SQUARE",
+      "label": "Clock font style",
+      "options": [
+	{
+          "label": "Square",
+	  "value": "SQUARE"
+	},
+	{
+	  "label": "Rounded",
+	  "value": "ROUNDED"
+	}
+      ]
+    },
+    {
+      "type": "toggle",
+      "messageKey": "display_seconds",
+      "defaultValue": true,
+      "label": "Display seconds"
+    },
+    {
+      "type": "toggle",
+      "messageKey": "display_date",
+      "defaultValue": false,
+      "label": "Display date"
+    },
+    {
+      "type": "toggle",
+      "messageKey": "draw_hour_circle",
+      "defaultValue": true,
+      "label": "Outline hour dial"
+    }
+  ]
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Animations"
+    },
+    {
+      "type": "toggle",
+      "messageKey": "intro_enabled",
+      "defaultValue": true,
+      "label": "Enable intro animation"
+    },
+    {
+      "type": "slider",
+      "messageKey": "intro_duration",
+      "defaultValue": 2000,
+      "label": "Animation duration",
+      "description": "Animation duration in milliseconds.",
+      "min": 1000,
+      "max": 3000,
+      "step": 100
+    },
+
+    {
+      "type": "toggle",
+      "messageKey": "tap_to_animate",
+      "defaultValue": true,
+      "label": "Tap/shake to animate"
+    }
+  ]
+},
+{
+  "type": "section",
+  "items": [
+    {
+      "type": "heading",
+      "defaultValue": "Battery Saver"
+    },
+    {
+      "type": "toggle",
+      "messageKey": "battery_saver_enabled",
+      "defaultValue": false,
+      "label": "Enable Battery Saver",
+      "description": "When Battery Saver is enabled, all animations will be disabled during the time period selected below."
+    },
+    {
+      "type": "select",
+      "messageKey": "battery_saver_start",
+      "defaultValue": "4",
+      "label": "Starts at",
+      "options": [
+        {
+          "label": "19:00",
+	  "value": "0"
+	},
+        {
+          "label": "20:00",
+	  "value": "1"
+	},
+        {
+          "label": "21:00",
+	  "value": "2"
+	},
+        {
+          "label": "22:00",
+	  "value": "3"
+	},
+        {
+          "label": "23:00",
+	  "value": "4"
+	},
+        {
+          "label": "00:00",
+	  "value": "5"
+	}
+      ]
+    },
+    {
+      "type": "select",
+      "messageKey": "battery_saver_stop",
+      "defaultValue": "11",
+      "label": "Ends at",
+      "options": [
+        {
+          "label": "01:00",
+	  "value": "6"
+	},
+        {
+          "label": "02:00",
+	  "value": "7"
+	},
+        {
+          "label": "03:00",
+	  "value": "8"
+	},
+        {
+          "label": "04:00",
+	  "value": "9"
+	},
+        {
+          "label": "05:00",
+	  "value": "10"
+	},
+        {
+          "label": "06:00",
+	  "value": "11"
+	},
+        {
+          "label": "07:00",
+	  "value": "12"
+	},
+        {
+          "label": "08:00",
+	  "value": "13"
+	},
+        {
+          "label": "09:00",
+	  "value": "14"
+	}
+      ]
+    }
+  ]
+},
+{ "type": "submit", "defaultValue": "Save" }
+]
