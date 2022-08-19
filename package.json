@@ -21,18 +21,6 @@
         },
         {
           "type": "font",
-          "name": "GOODBYEDESPAIR_8",
-          "file": "goodbyeDespair.ttf",
-          "characterRegex": "[0-9]"
-        },
-        {
-          "type": "font",
-          "name": "ADVOCUT_10",
-          "file": "AdvoCut.ttf",
-          "characterRegex": "[0-9]"
-        },
-        {
-          "type": "font",
           "name": "SILLYPIXEL_11",
           "file": "sillypixel.ttf",
           "characterRegex": "[0-9]"
