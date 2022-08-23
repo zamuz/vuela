@@ -78,7 +78,7 @@ static void prv_finish_animation(Animation *animation, bool finished, void *cont
   update_subscriptions(now->tm_hour);
 }
 
-static Animation *prv_make_clock_animation(int duration, ClockState start_state, AnimationCurve curve) {
+static Animation *prv_make_clock_animation(int duration, int delay, ClockState start_state, AnimationCurve curve) {
   Animation *clock_animation = animation_create();
   static const AnimationImplementation animation_implementation = {
     .update = prv_update_clock_animation,
@@ -86,7 +86,7 @@ static Animation *prv_make_clock_animation(int duration, ClockState start_state,
   };
   animation_set_implementation(clock_animation, &animation_implementation);
   animation_set_duration(clock_animation, duration);
-  animation_set_delay(clock_animation, CLOCK_ANIMATION_DELAY);
+  animation_set_delay(clock_animation, delay);
   animation_set_curve(clock_animation, curve);
   ClockAnimationContext *clock_context = malloc(sizeof(*clock_context));
   clock_context->start_state = start_state;
@@ -95,7 +95,7 @@ static Animation *prv_make_clock_animation(int duration, ClockState start_state,
   clock_context->end_state = (ClockState) {
     .minute_angle = now->tm_min * 6,
     .hour_angle = (now->tm_hour%12)*30 + now->tm_min*.48,
-    .second_angle = (now->tm_sec + duration*.001)*6,
+    .second_angle = (now->tm_sec + (duration+delay)*.001)*6,
     .date = now->tm_mday,
     .hour = now->tm_hour
   };
@@ -106,22 +106,59 @@ static Animation *prv_make_clock_animation(int duration, ClockState start_state,
 }
 
 int animation_direction(void) {
-    return (rand()%2) ? 360 : -360;
+    return (rand()%2) ? 360 : 0;
+}
+
+static void finish_first_tap_animation(Animation *animation, bool finished, void *context) {
+    ClockAnimationContext *clock_context = (ClockAnimationContext *)context;
+    ClockState end_state = clock_context->end_state;
+    ClockState start_state = (ClockState) {
+        .minute_angle = end_state.minute_angle + animation_direction(),
+        .hour_angle = end_state.hour_angle + animation_direction(),
+        .second_angle = end_state.second_angle + animation_direction(),
+	.date = end_state.date,
+	.hour = end_state.hour
+    };
+    Animation *const tap_animation = prv_make_clock_animation(1500, 200, start_state, AnimationCurveEaseInOut);
+    animation_schedule(tap_animation);
+}
+
+int tap_angle(void) {
+    int angles[] = { 0, 180, 270 };
+    return angles[rand()%3];
+}
+
+static Animation *make_first_tap_animation(int duration, ClockState start_state, AnimationCurve curve) {
+  Animation *clock_animation = animation_create();
+  static const AnimationImplementation animation_implementation = {
+    .update = prv_update_clock_animation,
+    .teardown = prv_teardown_clock_animation
+  };
+  animation_set_implementation(clock_animation, &animation_implementation);
+  animation_set_duration(clock_animation, duration);
+  animation_set_delay(clock_animation, 0);
+  animation_set_curve(clock_animation, curve);
+  ClockAnimationContext *clock_context = malloc(sizeof(*clock_context));
+  clock_context->start_state = start_state;
+  time_t tm = time(NULL);
+  struct tm *now = localtime(&tm);
+  int angle = tap_angle();
+  clock_context->end_state = (ClockState) {
+    .minute_angle = angle,
+    .hour_angle = angle,
+    .second_angle = angle,
+    .date = now->tm_mday,
+    .hour = now->tm_hour
+  };
+  animation_set_handlers(clock_animation, (AnimationHandlers) {
+    .stopped = finish_first_tap_animation
+  }, clock_context);
+  return clock_animation;
 }
 
 void schedule_tap_animation(ClockState current_state) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "TAP!");
-    int direction = animation_direction();
-    ClockState start_state = (ClockState) {
-        .minute_angle = current_state.minute_angle + direction,
-        .hour_angle = current_state.hour_angle - direction,
-        .second_angle = current_state.second_angle + animation_direction(),
-	.date = current_state.date,
-	.hour = current_state.hour
-    };
-    Animation *const tap_animation = prv_make_clock_animation(enamel_get_intro_duration(),
-                                                              start_state,
-							      AnimationCurveEaseInOut);
+    Animation *const tap_animation = make_first_tap_animation(1000, current_state, AnimationCurveEaseInOut);
     tick_timer_service_unsubscribe();
     accel_tap_service_unsubscribe();
     animation_schedule(tap_animation);
@@ -129,7 +166,7 @@ void schedule_tap_animation(ClockState current_state) {
 
 void watch_model_start_intro(ClockState start_state) {
     if (enamel_get_intro_enabled() && !battery_saver_enabled(start_state.hour)) {
-        Animation *const clock_animation = prv_make_clock_animation(enamel_get_intro_duration(),
+        Animation *const clock_animation = prv_make_clock_animation(enamel_get_intro_duration(), 0,
                                                                     start_state,
 								    AnimationCurveEaseInOut);
         animation_schedule(clock_animation);

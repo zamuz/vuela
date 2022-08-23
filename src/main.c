@@ -269,6 +269,10 @@ static void draw_clock(Layer *layer, GContext *ctx) {
     // draw hour hand outline
     graphics_context_set_stroke_color(ctx, enamel_get_clock_bg_color());
     graphics_context_set_stroke_width(ctx, 5);
+    if (!enamel_get_display_seconds() || battery_saver_enabled(clock_state.hour)) {
+        graphics_context_set_fill_color(ctx, enamel_get_clock_bg_color());
+        graphics_fill_circle(ctx, center_point, 4);
+    }
     //graphics_draw_line(ctx, center_point, slim_hour_to);
     graphics_draw_line(ctx, center_point, hour_to);
     graphics_context_set_stroke_width(ctx, 9);
@@ -298,16 +302,24 @@ static void prv_app_did_focus(bool did_focus) {
 }
 
 int start_angle(int hour) {
-  return (enamel_get_intro_enabled() && !battery_saver_enabled(hour)) ? ((rand()%2) ? 270 : -270) : 0;
+  if (enamel_get_intro_enabled() && !battery_saver_enabled(hour)) {
+    //int angles[] = { 45, 90, 135, 180, 225, 270, 315, 360 };
+    int angles[] = { 180, 225, 270, 315, 360 };
+    int direction = rand()%2 ? 1 : -1;
+    //int angle = angles[rand()%8];
+    int angle = angles[rand()%5];
+    return angle * direction;
+  }
+  else
+    return 0;
 }
 
 static void window_load(Window *window) {
   time_t tm = time(NULL);
   struct tm *tick_time = localtime(&tm);
-  int angle = start_angle(tick_time->tm_hour);
   clock_state = (ClockState) {
-    .minute_angle = tick_time->tm_min * 6 + angle,
-    .hour_angle = tick_time->tm_hour%12 * 30 + (tick_time->tm_min*6)*.08 - angle,
+    .minute_angle = tick_time->tm_min * 6 + start_angle(tick_time->tm_hour),
+    .hour_angle = tick_time->tm_hour%12 * 30 + (tick_time->tm_min*6)*.08 + start_angle(tick_time->tm_hour),
     .second_angle = tick_time->tm_sec * 6 + start_angle(tick_time->tm_hour),
     .date = (enamel_get_intro_enabled() && !battery_saver_enabled(tick_time->tm_hour)) ? 0 : tick_time->tm_mday,
     .hour = tick_time->tm_hour

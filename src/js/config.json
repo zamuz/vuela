@@ -109,7 +109,7 @@
       "type": "slider",
       "messageKey": "intro_duration",
       "defaultValue": 2000,
-      "label": "Animation duration",
+      "label": "Intro animation duration",
       "description": "Animation duration in milliseconds.",
       "min": 1000,
       "max": 3000,
