@@ -106,7 +106,7 @@ static Animation *prv_make_clock_animation(int duration, int delay, ClockState s
 }
 
 int animation_direction(void) {
-    return (rand()%2) ? 360 : 0;
+    return (rand()%2) ? -360 : 0;
 }
 
 static void finish_first_tap_animation(Animation *animation, bool finished, void *context) {

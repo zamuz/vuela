@@ -235,7 +235,7 @@ static void draw_clock(Layer *layer, GContext *ctx) {
     int h = layer_bounds.size.h;
     GPoint center_point = GPoint(w*.5, h*.5);
     // minute hand
-    GRect slim_min_frame = (GRect) { .size = GSize(w*.22, h*.22) };
+    GRect slim_min_frame = (GRect) { .size = GSize(w*.19, h*.19) };
     grect_align(&slim_min_frame, &layer_bounds, GAlignCenter, false);
     GRect min_frame = (GRect) { .size = GSize(w*.92, h*.92) };
     grect_align(&min_frame, &layer_bounds, GAlignCenter, false);
