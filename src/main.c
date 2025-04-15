@@ -99,7 +99,7 @@ static bool font_is_square(void) {
 
 static void draw_day(Layer *layer, GContext *ctx) {
     if (enamel_get_display_date()) {
-        GRect layer_bounds = layer_get_bounds(layer);
+        GRect layer_bounds = layer_get_unobstructed_bounds(layer);
         int w = layer_bounds.size.w;
         int h = layer_bounds.size.h;
         graphics_context_set_fill_color(ctx, enamel_get_clock_fg_color());
@@ -118,7 +118,7 @@ static void draw_day(Layer *layer, GContext *ctx) {
 }
 
 static void draw_seconds(Layer *layer, GContext *ctx) {
-    GRect layer_bounds = layer_get_bounds(layer);
+    GRect layer_bounds = layer_get_unobstructed_bounds(layer);
     int w = layer_bounds.size.w;
     int h = layer_bounds.size.h;
     GPoint center_point = GPoint(w*.5, h*.5);
@@ -149,7 +149,7 @@ static void draw_seconds(Layer *layer, GContext *ctx) {
 }
 
 static void draw_marks(Layer *layer, GContext *ctx) {
-    GRect layer_bounds = layer_get_bounds(layer);
+    GRect layer_bounds = layer_get_unobstructed_bounds(layer);
     // screen background
 #if defined(PBL_ROUND)
     graphics_context_set_fill_color(ctx, GColorBlack);
@@ -222,15 +222,16 @@ static void draw_marks(Layer *layer, GContext *ctx) {
     }
     // outline around hour dial
     if (enamel_get_draw_hour_circle()) {
+	int radius = h*.26;
         GPoint center_point = GPoint(w*.5, h*.5);
         graphics_context_set_stroke_width(ctx, 1);
         graphics_context_set_stroke_color(ctx, enamel_get_clock_fg_color());
-        graphics_draw_circle(ctx, center_point, w*.29);
+        graphics_draw_circle(ctx, center_point, radius < 35 ? 35 : radius);
     }
 }
 
 static void draw_clock(Layer *layer, GContext *ctx) {
-    GRect layer_bounds = layer_get_bounds(layer);
+    GRect layer_bounds = layer_get_unobstructed_bounds(layer);
     int w = layer_bounds.size.w;
     int h = layer_bounds.size.h;
     GPoint center_point = GPoint(w*.5, h*.5);
