@@ -106,9 +106,12 @@ static void draw_day(Layer *layer, GContext *ctx) {
         graphics_context_set_text_color(ctx, enamel_get_clock_bg_color());
         static char s_date[3];
         snprintf(s_date, sizeof(s_date), "%d", clock_state.date);
-        GRect text_box = (GRect) {
+        GRect text_frame = (GRect) { .size = GSize(w*.66, h*.66) };
+        grect_align(&text_frame, &layer_bounds, GAlignCenter, false);
+	GRect text_box = (GRect) {
           .size = GSize(16, 15),
-          .origin = GPoint(w < 180 ? (w*.815) : (w*.83), font_is_square() ? (h*.5 - 7) : (h*.5 - 6))
+          .origin = gpoint_from_polar(text_frame, GOvalScaleModeFitCircle,
+			              DEG_TO_TRIGANGLE(83))
         };
 	GRect date_bg = grect_inset(text_box, GEdgeInsets(font_is_square() ? -1 : -2, 1, 0, 0));
         graphics_fill_rect(ctx, date_bg, 3, GCornersAll);
@@ -222,7 +225,7 @@ static void draw_marks(Layer *layer, GContext *ctx) {
     }
     // outline around hour dial
     if (enamel_get_draw_hour_circle()) {
-	int radius = h*.26;
+	int radius = h*.25;
         GPoint center_point = GPoint(w*.5, h*.5);
         graphics_context_set_stroke_width(ctx, 1);
         graphics_context_set_stroke_color(ctx, enamel_get_clock_fg_color());
